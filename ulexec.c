@@ -44,7 +44,7 @@ char *argv_string[] = {
 "\0", 
 "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0"};	// do not delete
 
-int argv_count = 5;	// exec file name + argv_string
+int argv_count = 5;	// e.g. exec file name (1) + argv_string (4) = 5
 
 int auxv_count = 21;
 
@@ -264,7 +264,7 @@ unsigned long load_elf(pid_t pid, struct user_regs_struct regs, unsigned long tm
 void usage(char *filename)
 {
 	printf("userland exec\n");
-	printf("usage         : %s -p target pid\n", filename);
+	printf("usage         : %s -p target_pid\n", filename);
 	printf("example       : %s -p 12345\n", filename);
 }
 
@@ -294,7 +294,7 @@ int main(int argc, char **argv)
 	}
 
 #ifdef _DEBUG
-	printf("[I] attach the target process.\n");
+	printf("[I] attach to the target process.\n");
 #endif
 	if(ptrace(PTRACE_ATTACH, ppid, NULL, NULL) != 0){
 #ifdef _DEBUG
@@ -711,6 +711,12 @@ int main(int argc, char **argv)
 	Elf64_Ehdr *pElf64_Ehdr = (Elf64_Ehdr *)exec_file;
 	Elf64_Phdr *pElf64_Phdr = (Elf64_Phdr *)(exec_file + pElf64_Ehdr->e_phoff);
 	base_address = load_elf(cpid, regs, tmp_address, exec_file, base_address);
+	if(base_address == 1){
+#ifdef _DEBUG
+		printf("[E] load_elf error.\n");
+#endif
+		return 1;
+	}
 	unsigned long entry_point = base_address + pElf64_Ehdr->e_entry;
 #ifdef _DEBUG
 	printf("[I] base_address:0x%lx\n", base_address);
@@ -756,6 +762,12 @@ int main(int argc, char **argv)
 		printf("[I] load the elf dynamic linker/loader file in the child process memory.\n");
 #endif
 		interpreter_base_address = load_elf(cpid, regs, tmp_address, interpreter_file, 0);
+		if(interpreter_base_address == 1){
+#ifdef _DEBUG
+			printf("[E] load_elf error.\n");
+#endif
+			return 1;
+		}
 #ifdef _DEBUG
 		printf("[I] interpreter_base_address:0x%lx\n", interpreter_base_address);
 #endif
@@ -830,7 +842,7 @@ int main(int argc, char **argv)
 	unsigned long AT_EXECFN_data_start_address = 0;
 	unsigned long env_string_start_address = 0;
 	unsigned long argv_string_start_address = stack_top_address - 0x1000;
-	unsigned long auxv_data_start_address = stack_top_address - 0x2000;		// 16 bytes align
+	unsigned long auxv_data_start_address = stack_top_address - 0x2000;		// 16 bytes alignment
 	unsigned long AT_PLATFORM_data_start_address = 0;
 	char platform[] = "x86_64";
 	unsigned long AT_RANDOM_data_start_address = 0;
@@ -1244,7 +1256,7 @@ int main(int argc, char **argv)
 	
 	
 #ifdef _DEBUG
-	printf("[I] detach child process.\n");
+	printf("[I] detach the child process.\n");
 #endif
 	if(ptrace(PTRACE_DETACH, cpid, NULL, NULL) != 0){
 #ifdef _DEBUG

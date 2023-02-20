@@ -11,7 +11,7 @@ cd userland-exec
 ```
 xxd -i /usr/bin/nc > elffile.h
 ```
-3. get a variable from elffile.h file (e.g. unsigned char _usr_bin_nc[])
+3. get a variable name from elffile.h file (e.g. unsigned char _usr_bin_nc[])
 ```
 head -1 elffile.h
 ```
@@ -39,7 +39,7 @@ char *argv_string[] = {
 "\0", 
 "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0", "\0"};	// do not delete
 
-int argv_count = 5;	// exec file name + argv_string
+int argv_count = 5;	// e.g. exec file name (1) + argv_string (4) = 5
 ```
 5. build
 ```
@@ -48,7 +48,7 @@ gcc ulexec.c -o ulexec
 6. run ulexec
 ```
 userland exec
-usage         : ./ulexec -p target pid
+usage         : ./ulexec -p target_pid
 example       : ./ulexec -p 12345
 ```
 
