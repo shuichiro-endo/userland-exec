@@ -1,5 +1,5 @@
-# userland exec poc
-userland exec poc
+# userland exec
+userland exec
 
 ## Usage
 1. download the latest [userland-exec](https://github.com/shuichiro-endo/userland-exec)
