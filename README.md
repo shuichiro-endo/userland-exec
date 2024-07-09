@@ -1,3 +1,5 @@
+# This program doesn't work anymore.
+
 # userland exec
 userland exec
 
