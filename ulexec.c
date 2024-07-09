@@ -92,9 +92,9 @@ unsigned long load_elf(pid_t pid, struct user_regs_struct regs, unsigned long tm
 		if(pElf64_Phdr[i].p_type == PT_LOAD){
 			result = ldiv(pElf64_Phdr[i].p_vaddr+pElf64_Phdr[i].p_memsz, pElf64_Phdr[i].p_align);
 			if(result.rem != 0){
-				memory_size = result.quot * pElf64_Phdr[i].p_align + pElf64_Phdr[i].p_align;
+				memory_size += result.quot * pElf64_Phdr[i].p_align + pElf64_Phdr[i].p_align;
 			}else{
-				memory_size = result.quot * pElf64_Phdr[i].p_align;
+				memory_size += result.quot * pElf64_Phdr[i].p_align;
 			}
 		}
 	}
